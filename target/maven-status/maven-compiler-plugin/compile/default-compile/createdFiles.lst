@@ -1,0 +1,14 @@
+nl\hu\v1wac\servlets\DynamicServlet.class
+nl\hu\v1wac\model\Country.class
+nl\hu\v1wac\model\CountryDAO.class
+nl\hu\v1wac\webservices\AuthenticationResource.class
+nl\hu\v1wac\webservices\MySecurityContext.class
+nl\hu\v1wac\model\UserDAO.class
+nl\hu\v1wac\model\CountryPostgresDaoImpl.class
+nl\hu\v1wac\model\UserPostgresDaoImpl.class
+nl\hu\v1wac\webservices\WorldRecource.class
+nl\hu\v1wac\model\PostgresBaseDao.class
+nl\hu\v1wac\webservices\MySecurityContext$1.class
+nl\hu\v1wac\webservices\AuthenticationFilter.class
+nl\hu\v1wac\model\WorldService.class
+nl\hu\v1wac\model\ServiceProvider.class

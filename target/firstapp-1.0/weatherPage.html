@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+</head>
+<link rel="stylesheet" type="text/css" href="weatherStyle.css">
+<body bgcolor="#E6E6FA">
+
+<div id="id01" class="modal">
+    <form class="modal-content animate" id="voeg_toe_forum">
+        <h2 >Voer land gegevens in</h2>
+        <table id="table_input">
+            <tr>
+                <td>
+                code<input type="text" id="country1" name="country1">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                iso3<input type="text" id="country2"name="country2"></td>
+            </tr>
+            <tr><td>
+                name<input type="text" id="country3"name="country3"></td>
+            </tr>
+            <tr><td>
+                capital<input type="text" id="country4"name="country4"></td>
+            </tr>
+            <tr><td>
+                continent<input type="text" id="country5"name="country5"></td>
+            </tr>
+            <tr><td>
+                region<input type="text" id="country6"name="country6"></td>
+            </tr>
+            <tr><td>
+                surface<input type="text" id="country7"name="country7"></td>
+            </tr>
+            <tr><td>
+                population<input type="text" id="country8"name="country8"></td>
+            </tr>
+            <tr><td>
+                government<input type="text" id="country9"name="country9"></td>
+            </tr>
+            <tr><td>
+                latitude<input type="text" id="country10"name="country10"></td>
+            </tr>
+            <tr><td>
+                longitude<input type="text" id="country11"name="country11"></td>
+            </tr>
+        </table>
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" onclick="document.getElementById('id01').style.display = 'none';document.getElementById('voeg_toe_forum').reset();" class="cancelbtn">Back</button>
+            <button type="button" class="button start" id="voegtoeEdit" onclick='voegToe()'>Voeg toe</button>
+        </div>
+    </form>
+</div>
+<div id="id02" class="modal">
+    <form class="modal-content animate" id="inlog_forum">
+        <h2 >Voer inlog gegevens in</h2>
+        <table id="table_inlog">
+            <tr><td>
+                    username:<input type="text" id="username" name="username">
+            </td></tr>
+            <tr><td>
+                    password:<input type="password" id="password"name="password"></td>
+            </tr>
+        </table>
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" onclick="document.getElementById('id02').style.display = 'none';document.getElementById('inlog_forum').reset();" class="cancelbtn">Back</button>
+            <button type="button" class="button start" id="login" value="login" onclick='LogIn()'>Log in</button>
+        </div>
+    </form>
+</div>
+<div id="frame" style="overflow-x:auto;">
+    <div id="myLocation" class= "block"  style="overflow-x:auto;float:left;">
+        <div class="header">Mijn locatie</div>
+        <br/>
+        <table id="myloc">
+            <tr>
+                <td>Landcode:</td>
+                <td><label id="Landcode"></label></td>
+            </tr>
+            <tr>
+                <td>Land:</td>
+                <td><label id="Land"></label></td>
+            </tr>
+            <tr>
+                <td>Regio:</td>
+                <td><label id="Regio"></label></td>
+            </tr>
+            <tr>
+                <td>Stad:</td>
+                <td><label id="Stad"></label></td>
+            </tr>
+            <tr>
+                <td>Postcode:</td>
+                <td><label id="Postcode"></label></td>
+            </tr>
+            <tr>
+                <td>Latitude:</td>
+                <td><label id="Latitude"></label></td>
+            </tr>
+            <tr>
+                <td>Longitude:</td>
+                <td><label id="Longitude"></label></td>
+            </tr>
+            <tr>
+                <td>IP:</td>
+                <td><label id="IP"></label></td>
+            </tr>
+        </table>
+
+    </div>
+    <div id="weatherInfo" class= "block"  style="overflow-x:auto;float:left;">
+        <table id="mywea">
+            <div class="header" id="Stad1"> </div>
+            <br/>
+            <tr>
+                <td>Tempratuur:</td>
+                <td><label id="Tempratuur"></label></td>
+            </tr>
+            <tr>
+                <td>Luchtvochtigheid:</td>
+                <td><label id="Luchtvochtigheid"></label></td>
+            </tr>
+            <tr>
+                <td>Windsnelheid:</td>
+                <td><label id="Windsnelheid"></label></td>
+            </tr>
+            <tr>
+                <td>Windrichting:</td>
+                <td><label id="Windrichting"></label></td>
+            </tr>
+            <tr>
+                <td>Zonsopgang:</td>
+                <td><label id="Zonsopgang"></label></td>
+            </tr>
+            <tr>
+                <td>Zonsondergang:</td>
+                <td><label id="Zonsondergang"></label></td>
+            </tr>
+        </table>
+    </div>
+    <div id="countryList" class= "block" style="overflow-x:auto;float:left;">
+        <div class="header">Beschikbare vakantiebestemmingen</div>
+        <br/>
+        <table id="countries">
+            <tr>
+                <th>Land</th><th>Hoofdstad</th><th>Regio</th><th>Oppervlakte</th><th>Inwoners</th>
+            </tr>
+        </table>
+        <button onclick=add() class="addButton" >Add country+</button>
+    </div>
+    <button onclick="document.getElementById('id02').style.display = 'block'" class="logInButton" >log in</button>
+</div>
+<script type="text/javascript">
+    initPage();
+    function voegToe(){
+        var formData = new FormData(document.getElementById("voeg_toe_forum"));
+        var encData = new URLSearchParams(formData.entries());
+        let addOrUpdate = localStorage.getItem("addOrUpdate");
+        if(addOrUpdate == "add") {
+            fetch('restservices/countries/add', {
+                method: 'POST',
+                 body: encData,
+                headers : {
+                    'Authorization': 'Bearer ' + sessionStorage.getItem("sessionToken")
+                }})
+                .then(function (response) {
+                    if(response.ok){
+                        return response.text();
+                    }
+                    else{
+                        alert("not authorized");
+                    };
+                })
+        }
+        if(addOrUpdate == "update"){
+        fetch('restservices/countries/update', {
+            method: 'PUT',
+            body:encData,
+            headers : {
+                'Authorization': 'Bearer ' + sessionStorage.getItem("sessionToken")
+            }})
+            .then(function(response) {
+                if(response.ok){
+                    return response.text();
+                }
+                else{
+                    alert("not authorized");
+                };
+            })
+        }
+        document.getElementById('id01').style.display = 'none';
+        document.getElementById("voeg_toe_forum").reset();
+
+    }
+
+    function LogIn(){
+        let formData = new FormData(document.getElementById("inlog_forum"));
+        let encData = new URLSearchParams(formData.entries());
+        fetch('restservices/authentication', {
+            method: 'POST',
+            body: encData
+        })
+            .then(function (response) {
+                if(response.ok){
+                    document.getElementById('id02').style.display = 'none';
+                    document.getElementById("inlog_forum").reset();
+                    return response.text();
+                }
+                else{
+                    alert("wrong user/password");
+                };
+            }).then(function (token) {
+                sessionStorage.setItem("sessionToken", token);
+        }).catch(error => console.log(error))
+
+    }
+
+    function degToCompass(deg)
+    {
+        var val = parseInt((deg/22.5)+.5);
+        var arr = ["N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+        return arr[(val % 16)];
+    }
+    function Unix_timestamp(t)
+    {
+        var dt = new Date(t*1000);
+        var hr = dt.getHours();
+        var m = "0" + dt.getMinutes();
+        var s = "0" + dt.getSeconds();
+        return hr+ ':' + m.substr(-2) + ':' + s.substr(-2);
+    }
+    function initPage() {
+        if(sessionStorage.getItem("sessionToken")==null){
+            document.getElementById("id02").style.display = "block";
+        }
+        fetch("https://ipapi.co/json/")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (json) {
+                document.getElementById("Landcode").textContent = json.country;
+                document.getElementById("Land").textContent = json.country_name;
+                document.getElementById("Regio").textContent = json.region;
+                document.getElementById("Stad").textContent = json.city;
+                document.getElementById("Postcode").textContent = json.postal;
+                document.getElementById("Latitude").textContent = json.latitude;
+                document.getElementById("Longitude").textContent = json.longitude;
+                document.getElementById("IP").textContent = json.ip;
+                showWeather(json.latitude, json.longitude, json.city);
+                loadCountries();
+            });
+
+
+    }
+    function showWeather(latitude, longitude, city) {
+        var key = '5e2282359e28436e75fefaa5498c1446';
+        var prev = new Date(localStorage.getItem(city));
+        let stadText = document.getElementById("Stad1");
+        stadText.textContent = "Het weer in "+city;
+        var current  = new Date();
+        if(localStorage.getItem(city)==null || localStorage.getItem(city+"weather")==null || Math.abs(current.getTime() - prev.getTime())>(1000*60*10)){
+            console.log(longitude+"  "+latitude);
+            fetch("https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&q=" + city + "&appid=" + key + "&units=metric")
+            .then(function (resp) {
+                return resp.json()
+            })
+            .then(function (json) {
+                document.getElementById("Tempratuur").textContent = json.main.temp+"°C";
+                document.getElementById("Luchtvochtigheid").textContent = json.main.humidity+"%";
+                document.getElementById("Windsnelheid").textContent = json.wind.speed+" km/u";
+                document.getElementById("Windrichting").textContent = degToCompass(json.wind.deg);
+                document.getElementById("Zonsopgang").textContent = Unix_timestamp(json.sys.sunrise);
+                document.getElementById("Zonsondergang").textContent = Unix_timestamp(json.sys.sunset);
+                localStorage.setItem(city+"weather", JSON.stringify(json))
+            })
+            .catch(function () {
+                // catch any errors
+            });
+            var today = new Date();
+            localStorage.setItem(city, today.toString());
+
+    }
+    else{
+            var json = JSON.parse(localStorage.getItem(city+"weather"));
+            document.getElementById("Tempratuur").textContent = json.main.temp+"°C";
+            document.getElementById("Luchtvochtigheid").textContent = json.main.humidity+"%";
+            document.getElementById("Windsnelheid").textContent = json.wind.speed+" km/u";
+            document.getElementById("Windrichting").textContent = degToCompass(json.wind.deg);
+            document.getElementById("Zonsopgang").textContent = Unix_timestamp(json.sys.sunrise);
+            document.getElementById("Zonsondergang").textContent = Unix_timestamp(json.sys.sunset);
+        }
+    }
+    function loadCountries() {
+
+        fetch("restservices/countries/")
+            .then(function (resp) {
+                return resp.json()
+            })
+            .then(function (json) {
+                console.log(json);
+                let table = document.getElementById("countries");
+                for(let i=0; i<json.length;i++){
+                    let row = document.createElement("tr");
+                    let rowCurrentC = row.style.color;
+                    let rowCurrentBC = row.style.backgroundColor;
+                    row.style.cursor = "pointer";
+                    row.onmouseover = function () {
+                        row.style.color = "white";
+                        row.style.backgroundColor = "grey";
+                    }
+                    row.onmouseout = function () {
+                        row.style.color = rowCurrentC;
+                        row.style.backgroundColor = rowCurrentBC;
+                    }
+                    table.appendChild(row);
+                    let td1 = document.createElement("td");
+                    let td2 = document.createElement("td");
+                    let td3 = document.createElement("td");
+                    let td4 = document.createElement("td");
+                    let td5 = document.createElement("td");
+                    let td6 = document.createElement("td");
+                    let td7 = document.createElement("td");
+                    let wijzig = document.createElement("button");
+                    let verwijder = document.createElement("button");
+                    wijzig.innerText = "wijzig";
+                    verwijder.innerText = "verwijder";
+                    wijzig.onclick =   function(event){
+                        event.stopImmediatePropagation();
+                        update();
+                        document.getElementById("country1").value = json[i].code;
+                        document.getElementById("country2").value = json[i].iso3;
+                        document.getElementById("country3").value = json[i].name;
+                        document.getElementById("country4").value = json[i].capital;
+                        document.getElementById("country5").value = json[i].continent;
+                        document.getElementById("country6").value = json[i].region;
+                        document.getElementById("country7").value = json[i].surface;
+                        document.getElementById("country8").value= json[i].population;
+                        document.getElementById("country9").value= json[i].government;
+                        document.getElementById("country10").value = json[i].latitude;
+                        document.getElementById("country11").value = json[i].longitude;
+                    };
+                    verwijder.onclick =  function(event){
+
+                        fetch('restservices/countries/'+json[i].code, {method: 'DELETE',
+                            headers : {
+                                'Authorization': 'Bearer' + sessionStorage.getItem("sessionToken")
+                            }})
+                            .then(function(response) {
+                                if(response.ok){
+                                    event.stopImmediatePropagation();
+                                    table.removeChild(row);
+                                    return response.text();
+                                }
+                                else{
+                                    alert("not authorized");
+                                };
+                            })
+                    };
+                    td1.innerText =  json[i].name;
+                    td2.innerText =  json[i].capital;
+                    td3.innerText =  json[i].region;
+                    td4.innerText =  json[i].surface;
+                    td5.innerText =  json[i].population;
+                    td6.appendChild(wijzig);
+                    td7.appendChild(verwijder);
+                    row.appendChild(td1);
+                    row.appendChild(td2);
+                    row.appendChild(td3);
+                    row.appendChild(td4);
+                    row.appendChild(td5);
+                    row.appendChild(td6);
+                    row.appendChild(td7);
+                    let lat = json[i]["latitude"];
+                    let lng = json[i]["longitude"];
+                    let capital = json[i].capital;
+                    row.onclick = function ()
+                    {
+                        console.log(lat);
+                        console.log(lng);
+                        showWeather(lat,lng,capital);
+                    };
+                }
+                sortTable(table);
+            })
+
+        }
+    function addOrUpdate() {
+        document.getElementById('id01').style.display = 'block';
+    }
+    function add(){
+        document.getElementById("voegtoeEdit").innerText ="Voeg toe";
+        localStorage.setItem("addOrUpdate", "add");
+        addOrUpdate();
+    }
+    function update(){
+        document.getElementById("voegtoeEdit").innerText ="Wijzig";
+        localStorage.setItem("addOrUpdate", "update");
+        addOrUpdate();
+    }
+    function sortTable(table) {
+        var rows, switching, i, x, y, shouldSwitch;
+        switching = true;
+        /*Make a loop that will continue until
+        no switching has been done:*/
+        while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.rows;
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            for (i = 1; i < (rows.length - 1); i++) {
+                //start by saying there should be no switching:
+                shouldSwitch = false;
+                /*Get the two elements you want to compare,
+                one from current row and one from the next:*/
+                x = rows[i].getElementsByTagName("td")[0];
+                y = rows[i + 1].getElementsByTagName("td")[0];
+                //check if the two rows should switch place:
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    //if so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+            if (shouldSwitch) {
+                /*If a switch has been marked, make the switch
+                and mark that a switch has been done:*/
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+
+
+</script>
+</body>
+</html>
